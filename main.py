@@ -15,6 +15,9 @@ from scipy.stats import randint
 from sklearn.model_selection import RandomizedSearchCV
 from sklearn.metrics import ConfusionMatrixDisplay
 from sklearn.metrics import accuracy_score
+import xgboost as xgb
+from sklearn.decomposition import PCA
+from sklearn.cluster import DBSCAN
 #%%
 data = pd.read_csv('wine+quality/winequality-red.csv', sep=';') # need to write the expectation of the seperator
 data_types = pd.read_csv('data_types.csv', sep=';')
@@ -187,6 +190,11 @@ We can do a graph for the leaves
 It looks like those are better results than the log regression 
 0.7975 is the accuracy, precision and recall are similar as well as in the log regression 
 Same for the misclassified - 5 and 6 are mostly misclassified 
+
+Based on the feature importance, the top 3 most important componenets are alcohol, sulphates and volatile acidity
+The effect of this phenomenon is somewhat reduced thanks to random selection of features at each node creation, but in general the effect is not removed completely.
+
+
 """
 param_dist = {'n_estimators': randint(50,500),
               'max_depth': randint(1,20)}
@@ -231,10 +239,51 @@ data.loc[y_test_df[~y_test_df['check']].index,'quality'].value_counts()
 importances = best_rf.feature_importances_
 forest_importances = pd.Series(importances, index=X_train.columns)
 
+plt.figure(figsize=(9,9))
+forest_importances.sort_values(ascending=False).plot(kind='barh')
+plt.ylabel('Importance')
+plt.xlabel('Features')
+plt.savefig('rf_feature_importance.png', dpi=300, bbox_inches='tight')
+plt.show()
 
-# to update
-fig, ax = plt.subplots()
+#%%
+# now we will try XGBoost since it is not affected by collinearity
+"""
+Accuracy is 0.795 which is similar to the other models 
+Note: correlation does not affect xgboost
+"""
+model = xgb.XGBClassifier()
 
-ax.set_title("Feature importances using MDI")
-ax.set_ylabel("Mean decrease in impurity")
+from sklearn.preprocessing import LabelEncoder
+le = LabelEncoder()
+y_train_le = le.fit_transform(y_train)
 
+#Training the model on the training data
+model.fit(X_train, y_train_le)
+
+#Making predictions on the test set
+predictions = model.predict(X_test)
+
+#Calculating accuracy
+y_test_le = le.fit_transform(y_test)
+accuracy = accuracy_score(y_test_le, predictions)
+
+
+#%%
+# PCA
+"""
+In its essence PCA is correlation test
+The first component has explained variance 0.94, which is more than what we have asked for!
+It is an evidence for correlation, cannot be used to understand the drivers 
+"""
+pca = PCA(n_components=2)
+pca.fit(X_train)
+pca.explained_variance_ratio_
+pca.get_params()
+
+#%%
+# DBSCAN
+clustering = DBSCAN(eps=12.5, min_samples=4).fit(X_train)
+DBSCAN_dataset = X_train.copy()
+DBSCAN_dataset.loc[:,'Cluster'] = clustering.labels_
+# here need to think more on this if at all we will do it

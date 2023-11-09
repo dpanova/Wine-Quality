@@ -29,3 +29,6 @@ Notes from the task:
 15. add requirements file for packages - if not, install
 16. maybe we need to stratify by quality 
 17. it would be cool if we generate a pdf file out of the automated frame
+18. plot the top 3 chemical features vs the quality 
+19. note that the difference between 5 and 6 can very different to understand since the labels are added by people 
+20. we can try to model only 5 and 6 alone as a second model ?
