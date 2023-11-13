@@ -8,13 +8,11 @@ wine=WineQualityClass(csv_path=csv_path, dtype_path=dtypes_path)
 # read the data from a csv
 wine.get_data_csv()
 # create binary variable for quality
-wine.binary_variable_creation(criteria=6)
+wine.binary_variable_creation()
 df = wine.data
 
-under_inspection  = ['quality bucket' ,'alcohol', 'sulphates', 'volatile acidity' ]
 
-df[under_inspection].groupby(by='quality bucket')
-df[under_inspection].groupby(by='quality bucket').mean()
-# df[under_inspection].groupby(by='quality bucket').max()
-# df[under_inspection].groupby(by='quality bucket').min()
+#%%
+under_inspection  = ['quality' ,'alcohol', 'sulphates', 'volatile acidity' ]
+df[under_inspection].groupby(by='quality').mean().to_csv('top_drivers_statistics.csv')
 
