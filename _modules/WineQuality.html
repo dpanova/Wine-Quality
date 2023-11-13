@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WineQuality &mdash; Wine Quality  documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Wine Quality
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../WineQuality.html">WineQuality module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Wine Quality</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">WineQuality</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for WineQuality</h1><div class="highlight"><pre>
+<span></span><span class="c1"># library</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span><span class="p">,</span> <span class="n">RandomizedSearchCV</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">sklearn.decomposition</span> <span class="kn">import</span> <span class="n">PCA</span>
+<span class="kn">from</span> <span class="nn">sklearn.ensemble</span> <span class="kn">import</span> <span class="n">RandomForestClassifier</span>
+<span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">randint</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">accuracy_score</span><span class="p">,</span> <span class="n">confusion_matrix</span><span class="p">,</span> <span class="n">precision_score</span><span class="p">,</span> <span class="n">recall_score</span>
+<span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LogisticRegression</span>
+
+
+<div class="viewcode-block" id="WineQualityClass">
+<a class="viewcode-back" href="../WineQuality.html#WineQuality.WineQualityClass">[docs]</a>
+<span class="k">class</span> <span class="nc">WineQualityClass</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;WineQuality class automates a report for wine quality.</span>
+
+<span class="sd">    :param csv_path: path to the input data</span>
+<span class="sd">    :type csv_path: str</span>
+<span class="sd">    :param dtype_path: path to the file which contains the necessary data types and columns in order for the analysis to be conducted</span>
+<span class="sd">    :type dtype_path: str</span>
+<span class="sd">    :param csv_separator: separator for the csv_path file</span>
+<span class="sd">    :type csv_separator: str</span>
+<span class="sd">    :param dtype_separator: separator for the dtype_csv file</span>
+<span class="sd">    :type dtype_separator: str</span>
+<span class="sd">    :param logname: path to the log file</span>
+<span class="sd">    :type logname: str</span>
+<span class="sd">    :return: WineQualityClass object</span>
+<span class="sd">    :rtype: WineQualityClass</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span>
+                 <span class="p">,</span> <span class="n">csv_path</span>
+                 <span class="p">,</span> <span class="n">dtype_path</span>
+                 <span class="p">,</span> <span class="n">csv_separator</span><span class="o">=</span><span class="s1">&#39;;&#39;</span>
+                 <span class="p">,</span> <span class="n">dtype_separator</span><span class="o">=</span><span class="s1">&#39;;&#39;</span>
+                 <span class="p">,</span> <span class="n">logname</span><span class="o">=</span><span class="s1">&#39;wine.log&#39;</span>
+                 <span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_types</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">dtype_path</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="n">dtype_separator</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">csv_path</span> <span class="o">=</span> <span class="n">csv_path</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">csv_separator</span> <span class="o">=</span> <span class="n">csv_separator</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">logname</span>
+                            <span class="p">,</span> <span class="n">filemode</span><span class="o">=</span><span class="s1">&#39;a&#39;</span>
+                            <span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%(asctime)s</span><span class="s1"> </span><span class="si">%(levelname)s</span><span class="s1"> </span><span class="si">%(message)s</span><span class="s1">&#39;</span>
+                            <span class="p">,</span> <span class="n">datefmt</span><span class="o">=</span><span class="s1">&#39;%H:%M:%S&#39;</span>
+                            <span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
+
+<div class="viewcode-block" id="WineQualityClass.get_data_csv">
+<a class="viewcode-back" href="../WineQuality.html#WineQuality.WineQualityClass.get_data_csv">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_data_csv</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the csv_path location from the class and the corresponding csv_separator to read the data</span>
+
+<span class="sd">        :return: pandas data frame with the results</span>
+<span class="sd">        :rtype: pandas.DataFrame</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">csv_path</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">csv_separator</span><span class="p">)</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Data is read from a csv file successfully&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="WineQualityClass.validate_data">
+<a class="viewcode-back" href="../WineQuality.html#WineQuality.WineQualityClass.validate_data">[docs]</a>
+    <span class="k">def</span> <span class="nf">validate_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">col_name</span><span class="o">=</span><span class="s1">&#39;column name&#39;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Validates the input data</span>
+
+<span class="sd">        :param col_name: indicates where in the dtype_csv file the necessary column names are</span>
+<span class="sd">        :type col_name: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># we can add th col_name in the class itself after that</span>
+        <span class="c1"># check if all necessary columns are present</span>
+        <span class="n">necessary_columns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_types</span><span class="p">[</span><span class="n">col_name</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">necessary_columns</span><span class="p">)</span><span class="o">.</span><span class="n">difference</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)))</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;All columns are present correctly&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;NOT all columns are present correctly&quot;</span><span class="p">)</span>
+
+        <span class="c1"># check that the data types are as expected</span>
+        <span class="n">downloaded_data_type</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">dtypes</span><span class="p">)</span>
+        <span class="n">downloaded_data_type</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">downloaded_data_type</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_types</span><span class="o">.</span><span class="n">columns</span>
+        <span class="n">check_df</span> <span class="o">=</span> <span class="n">downloaded_data_type</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_types</span><span class="p">,</span>
+                                              <span class="n">right_on</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data_types</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                              <span class="n">left_on</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data_types</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                              <span class="n">how</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">)</span>
+        <span class="n">check_df</span><span class="p">[</span><span class="s1">&#39;type check&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">check_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">data_types</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;_x&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">check_df</span><span class="p">[</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data_types</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;_y&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">sum</span><span class="p">(</span><span class="n">check_df</span><span class="p">[</span><span class="s1">&#39;type check&#39;</span><span class="p">])</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">check_df</span><span class="p">):</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;All data is in the correct type&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;NOT all data is in the correct type&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="WineQualityClass.binary_variable_creation">
+<a class="viewcode-back" href="../WineQuality.html#WineQuality.WineQualityClass.binary_variable_creation">[docs]</a>
+    <span class="k">def</span> <span class="nf">binary_variable_creation</span><span class="p">(</span><span class="bp">self</span>
+                                 <span class="p">,</span> <span class="n">old_col_name</span><span class="o">=</span><span class="s1">&#39;quality&#39;</span>
+                                 <span class="p">,</span> <span class="n">new_col_name</span><span class="o">=</span><span class="s1">&#39;quality bucket&#39;</span>
+                                 <span class="p">,</span> <span class="n">operator</span><span class="o">=</span><span class="s1">&#39;&gt;&#39;</span>
+                                 <span class="p">,</span> <span class="n">criteria</span><span class="o">=</span><span class="mi">5</span>
+                                 <span class="p">,</span> <span class="n">label1</span><span class="o">=</span><span class="s1">&#39;high&#39;</span>
+                                 <span class="p">,</span> <span class="n">label2</span><span class="o">=</span><span class="s1">&#39;low&#39;</span>
+                                 <span class="p">,</span> <span class="n">distribution_plot</span><span class="o">=</span><span class="kc">True</span>
+                                 <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Creates a new binary variable from an ordered categorical variable</span>
+
+<span class="sd">        :param old_col_name: ordered categorical variable column name</span>
+<span class="sd">        :type old_col_name: str</span>
+<span class="sd">        :param new_col_name: new categorical variable column name</span>
+<span class="sd">        :param new_col_name: str</span>
+<span class="sd">        :param operator: operator for the creation of the new variable should be. The options are between (&#39;&gt;&#39;,&#39;&lt;&#39;,&#39;==&#39;)</span>
+<span class="sd">        :type operator: str</span>
+<span class="sd">        :param criteria: ordered categorical variable cut-off point for the creation of the new variable</span>
+<span class="sd">        :param criteria: int</span>
+<span class="sd">        :param label1: one of the labels for the new variable</span>
+<span class="sd">        :type label1: str</span>
+<span class="sd">        :param label2: the other label for the new variable</span>
+<span class="sd">        :type label2: str</span>
+<span class="sd">        :param distribution_plot: if distribution graphs should be drawn and saved</span>
+<span class="sd">        :type distribution_plot: bool</span>
+<span class="sd">        :return: a new column in the dataframe and graphs of the dependant variables</span>
+<span class="sd">        :rtype: pandas.DataFrame</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">label1</span> <span class="o">=</span> <span class="n">label1</span>
+        <span class="k">if</span> <span class="n">operator</span> <span class="o">==</span> <span class="s1">&#39;&gt;&#39;</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">new_col_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">old_col_name</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">criteria</span><span class="p">,</span> <span class="n">label1</span><span class="p">,</span> <span class="n">label2</span><span class="p">)</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;New variable created&quot;</span><span class="p">)</span>
+            <span class="k">except</span>  <span class="p">(</span><span class="ne">AttributeError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;CANNOT create a new variable since the criteria is not an integer&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="s2">&quot;CANNOT create a new variable since the criteria is not an integer&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">operator</span> <span class="o">==</span> <span class="s1">&#39;&lt;&#39;</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">new_col_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">old_col_name</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">criteria</span><span class="p">,</span> <span class="n">label1</span><span class="p">,</span> <span class="n">label2</span><span class="p">)</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;New variable created&quot;</span><span class="p">)</span>
+            <span class="k">except</span>  <span class="p">(</span><span class="ne">AttributeError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;CANNOT create a new variable since the criteria is not an integer&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="s2">&quot;CANNOT create a new variable since the criteria is not an integer&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">operator</span> <span class="o">==</span> <span class="s1">&#39;==&#39;</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">new_col_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">old_col_name</span><span class="p">]</span> <span class="o">==</span> <span class="n">criteria</span><span class="p">,</span> <span class="n">label1</span><span class="p">,</span> <span class="n">label2</span><span class="p">)</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;New variable created&quot;</span><span class="p">)</span>
+            <span class="k">except</span>  <span class="p">(</span><span class="ne">AttributeError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;CANNOT create a new variable since the criteria is not an integer&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="s2">&quot;CANNOT create a new variable since the criteria is not an integer&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;CANNOT create a new variable since the operator is not supported&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="s2">&quot;CANNOT create a new variable since the operator is not supported&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">distribution_plot</span><span class="p">:</span>
+            <span class="c1"># old column distribution</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">old_col_name</span> <span class="o">=</span> <span class="n">old_col_name</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">old_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">old_col_name</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">())</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">old_df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">old_df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">by</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">old_col_name</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="n">code_str</span> <span class="o">=</span> <span class="s2">&quot;sns.barplot(self.old_df, x=self.old_col_name, y=&#39;count&#39;)&quot;</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">plot_figure</span><span class="p">(</span>
+                <span class="n">plot_title</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">old_col_name</span> <span class="o">+</span> <span class="s1">&#39; distribution&#39;</span>
+                <span class="p">,</span> <span class="n">file_title</span><span class="o">=</span><span class="s1">&#39;dependant_original.png&#39;</span>
+                <span class="p">,</span> <span class="n">plot_code</span><span class="o">=</span><span class="n">code_str</span>
+            <span class="p">)</span>
+
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Old variable distribution plot created&quot;</span><span class="p">)</span>
+
+            <span class="c1"># new column distribution</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">new_col_name</span> <span class="o">=</span> <span class="n">new_col_name</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">new_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">new_col_name</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">())</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">new_df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">new_df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">by</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">new_col_name</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="n">code_str</span> <span class="o">=</span> <span class="s2">&quot;sns.barplot(self.new_df, x=self.new_col_name, y=&#39;count&#39;)&quot;</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">plot_figure</span><span class="p">(</span>
+                <span class="n">plot_title</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">new_col_name</span> <span class="o">+</span> <span class="s1">&#39; distribution&#39;</span>
+                <span class="p">,</span> <span class="n">file_title</span><span class="o">=</span><span class="s1">&#39;dependant_created.png&#39;</span>
+                <span class="p">,</span> <span class="n">plot_code</span><span class="o">=</span><span class="n">code_str</span>
+            <span class="p">)</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;New variable distribution plot created&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="WineQualityClass.data_split">
+<a class="viewcode-back" href="../WineQuality.html#WineQuality.WineQualityClass.data_split">[docs]</a>
+    <span class="k">def</span> <span class="nf">data_split</span><span class="p">(</span><span class="bp">self</span>
+                   <span class="p">,</span> <span class="n">y_column</span><span class="o">=</span><span class="s1">&#39;quality bucket&#39;</span>
+                   <span class="p">,</span> <span class="n">stratify_column</span><span class="o">=</span><span class="s1">&#39;quality&#39;</span>
+                   <span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mf">0.25</span>
+                   <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Splitting the data into train and test</span>
+
+<span class="sd">        :param y_column: column name of the dependant variable</span>
+<span class="sd">        :type y_column: str</span>
+<span class="sd">        :param stratify_column: column name of the variable to do a stratified sample on</span>
+<span class="sd">        :type stratify_column: str</span>
+<span class="sd">        :param size: test size</span>
+<span class="sd">        :type size: float</span>
+<span class="sd">        :return: X_train, y_train, X_test and y_test data frames as well as saving them as csv files with the same naming conventions</span>
+<span class="sd">        :rtype: list of pandas.DataFrame</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">y_column</span> <span class="o">=</span> <span class="n">y_column</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">y_columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">stratify_column</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_column</span><span class="p">]</span>
+            <span class="n">all_columns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">x_columns</span> <span class="o">=</span> <span class="n">all_columns</span><span class="p">[</span><span class="o">~</span><span class="n">all_columns</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y_columns</span><span class="p">)]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">X_train</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">X_test</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_train</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_columns</span><span class="p">]</span>
+                                                                                    <span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">y_column</span><span class="p">]</span>
+                                                                                    <span class="p">,</span>
+                                                                                    <span class="n">stratify</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">stratify_column</span><span class="p">]</span>
+                                                                                    <span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="n">size</span><span class="p">)</span>
+
+            <span class="c1"># save files for future use</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">X_train</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s1">&#39;X_train.csv&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">X_test</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s1">&#39;X_test.csv&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">y_train</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s1">&#39;y_train.csv&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">y_test</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s1">&#39;y_test.csv&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Train and test split of the data&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error</span><span class="p">)</span></div>
+
+        <span class="c1"># return X_train, X_test, y_train, y_test</span>
+
+<div class="viewcode-block" id="WineQualityClass.plot_figure">
+<a class="viewcode-back" href="../WineQuality.html#WineQuality.WineQualityClass.plot_figure">[docs]</a>
+    <span class="k">def</span> <span class="nf">plot_figure</span><span class="p">(</span><span class="bp">self</span>
+                    <span class="p">,</span> <span class="n">plot_title</span>
+                    <span class="p">,</span> <span class="n">file_title</span>
+                    <span class="p">,</span> <span class="n">plot_code</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Plotting a figure based on dynamic code</span>
+
+<span class="sd">        :param plot_title: plot title</span>
+<span class="sd">        :type plot_title: str</span>
+<span class="sd">        :param file_title: title of the saved file</span>
+<span class="sd">        :type file_title: str</span>
+<span class="sd">        :param plot_code: code to be executed for the plot to visualize</span>
+<span class="sd">        :type plot_code: str</span>
+<span class="sd">        :return: saved file with the requested plot</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+            <span class="n">exec</span><span class="p">(</span><span class="n">plot_code</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">plot_title</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">file_title</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Graph is plotted&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="WineQualityClass.correlation_analysis">
+<a class="viewcode-back" href="../WineQuality.html#WineQuality.WineQualityClass.correlation_analysis">[docs]</a>
+    <span class="k">def</span> <span class="nf">correlation_analysis</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Correlation analysis between dependant variables</span>
+
+<span class="sd">        :return: &#39;feature_correlation.png&#39; - a plot with the correlation matrix</span>
+<span class="sd">        :rtype: png file</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">corr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">X_train</span><span class="o">.</span><span class="n">corr</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plot_figure</span><span class="p">(</span>
+                <span class="n">plot_title</span><span class="o">=</span><span class="s1">&#39;Feature Correlation&#39;</span>
+                <span class="p">,</span> <span class="n">file_title</span><span class="o">=</span><span class="s1">&#39;feature_correlation.png&#39;</span>
+                <span class="p">,</span> <span class="n">plot_code</span><span class="o">=</span><span class="s1">&#39;sns.heatmap(self.corr, annot=True)&#39;</span>
+            <span class="p">)</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Correlation analysis completed&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="WineQualityClass.pca_analysis">
+<a class="viewcode-back" href="../WineQuality.html#WineQuality.WineQualityClass.pca_analysis">[docs]</a>
+    <span class="k">def</span> <span class="nf">pca_analysis</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Principal components analysis</span>
+
+<span class="sd">        :param n: number of components for PCA</span>
+<span class="sd">        :type n: int</span>
+<span class="sd">        :return: a list with the explained variance from the PCA components</span>
+<span class="sd">        :rtype: list</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">pca</span> <span class="o">=</span> <span class="n">PCA</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="n">n</span><span class="p">)</span>
+            <span class="n">pca</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X_train</span><span class="p">)</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;PCA Analysis completed&#39;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">pca</span><span class="o">.</span><span class="n">explained_variance_ratio_</span></div>
+
+
+<div class="viewcode-block" id="WineQualityClass.independent_logistic_regression">
+<a class="viewcode-back" href="../WineQuality.html#WineQuality.WineQualityClass.independent_logistic_regression">[docs]</a>
+    <span class="k">def</span> <span class="nf">independent_logistic_regression</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Run a logistic regression against each dependant variable separately to identify linear relationship</span>
+
+<span class="sd">        :return: &#39;logistic_regressions.png&#39; - a plot with the logistic graphs</span>
+<span class="sd">        :rtype: png file</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">train_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">X_train</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_train</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">melt_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">melt</span><span class="p">(</span><span class="n">train_df</span><span class="p">,</span> <span class="n">id_vars</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">y_column</span><span class="p">]</span>
+                                   <span class="p">,</span> <span class="n">value_vars</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">x_columns</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">melt_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">y_column</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">melt_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">y_column</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">label1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="n">code_str</span> <span class="o">=</span> <span class="s2">&quot;sns.lmplot(x=&#39;value&#39;, y=self.y_column, data=self.melt_df, col=&#39;variable&#39;, col_wrap=4, aspect=0.6, height=4,palette=&#39;coolwarm&#39;, logistic=True)&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plot_figure</span><span class="p">(</span>
+                <span class="n">plot_title</span><span class="o">=</span><span class="s1">&#39;&#39;</span>
+                <span class="p">,</span> <span class="n">file_title</span><span class="o">=</span><span class="s1">&#39;logistic_regression.png&#39;</span>
+                <span class="p">,</span> <span class="n">plot_code</span><span class="o">=</span><span class="n">code_str</span>
+            <span class="p">)</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Logistic regressions against all independent variables completed&#39;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="WineQualityClass.best_model">
+<a class="viewcode-back" href="../WineQuality.html#WineQuality.WineQualityClass.best_model">[docs]</a>
+    <span class="k">def</span> <span class="nf">best_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">param_dist</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Identify the best model after tuning the hyperparameters</span>
+
+<span class="sd">        :param model: an initiated machine learning model</span>
+<span class="sd">        :type model: Any</span>
+<span class="sd">        :param param_dist: a dictionary with the parameters and their respective ranges for the tuning</span>
+<span class="sd">        :type param_dist: dict</span>
+<span class="sd">        :return: RandomizedSearchCV object</span>
+<span class="sd">        :rtype: RandomizedSearchCV</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">best_model</span> <span class="o">=</span> <span class="n">RandomizedSearchCV</span><span class="p">(</span><span class="n">model</span><span class="p">,</span>
+                                            <span class="n">param_distributions</span><span class="o">=</span><span class="n">param_dist</span><span class="p">,</span>
+                                            <span class="n">n_iter</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+                                            <span class="n">cv</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Parameter tuning completed&#39;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">best_model</span></div>
+
+
+<div class="viewcode-block" id="WineQualityClass.accuracy_metrics">
+<a class="viewcode-back" href="../WineQuality.html#WineQuality.WineQualityClass.accuracy_metrics">[docs]</a>
+    <span class="k">def</span> <span class="nf">accuracy_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">cm_title</span><span class="p">,</span> <span class="n">cm_file_name</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Provide accuracy metrics to compare the different models</span>
+
+<span class="sd">        :param y_pred: predicted dependent values</span>
+<span class="sd">        :type y_pred: list</span>
+<span class="sd">        :param cm_title: title for the confusion matrix plot</span>
+<span class="sd">        :type cm_title: str</span>
+<span class="sd">        :param cm_file_name: title for the confusion matrix plot</span>
+<span class="sd">        :type cm_file_name: str</span>
+<span class="sd">        :return: accuracy, precision, recall and saved graph for the confusion matrix</span>
+<span class="sd">        :rtype: list</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># accuracy score</span>
+            <span class="n">acc</span> <span class="o">=</span> <span class="n">accuracy_score</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span>
+            <span class="c1"># calculate the precision score</span>
+            <span class="n">precision</span> <span class="o">=</span> <span class="n">precision_score</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="s1">&#39;macro&#39;</span><span class="p">)</span>
+            <span class="n">recall</span> <span class="o">=</span> <span class="n">recall_score</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="s1">&#39;macro&#39;</span><span class="p">)</span>
+            <span class="c1"># confusion matrix</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">cm</span> <span class="o">=</span> <span class="n">confusion_matrix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span>
+
+            <span class="n">code_str</span> <span class="o">=</span> <span class="s2">&quot;sns.heatmap(self.cm, annot=True, fmt=&#39;.3f&#39;, linewidths=.5, square=True, cmap=&#39;Blues_r&#39;)&quot;</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">plot_figure</span><span class="p">(</span>
+                <span class="n">plot_title</span><span class="o">=</span><span class="n">cm_title</span>
+                <span class="p">,</span> <span class="n">file_title</span><span class="o">=</span><span class="n">cm_file_name</span>
+                <span class="p">,</span> <span class="n">plot_code</span><span class="o">=</span><span class="n">code_str</span>
+            <span class="p">)</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Accuracy metrics calculated&#39;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">acc</span><span class="p">,</span> <span class="n">precision</span><span class="p">,</span> <span class="n">recall</span></div>
+
+
+<div class="viewcode-block" id="WineQualityClass.misclassified_analysis">
+<a class="viewcode-back" href="../WineQuality.html#WineQuality.WineQualityClass.misclassified_analysis">[docs]</a>
+    <span class="k">def</span> <span class="nf">misclassified_analysis</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Misclassification analysis to understand where the model miscalculates and if any pattern can be found</span>
+
+<span class="sd">        :param y_pred: predicted dependent values</span>
+<span class="sd">        :type y_pred: list</span>
+<span class="sd">        :return: misclassified values</span>
+<span class="sd">        :rtype: list</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+
+            <span class="c1"># check the misclassified datapoints</span>
+            <span class="n">y_test_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y_test</span><span class="p">)</span>
+            <span class="n">y_test_df</span><span class="p">[</span><span class="s1">&#39;pred&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">y_pred</span>
+            <span class="n">y_test_df</span><span class="p">[</span><span class="s1">&#39;check&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">y_test_df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">y_column</span><span class="p">]</span> <span class="o">==</span> <span class="n">y_test_df</span><span class="p">[</span><span class="s1">&#39;pred&#39;</span><span class="p">]</span>
+
+            <span class="n">original_y_column_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">y</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_columns</span> <span class="k">if</span> <span class="n">y</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_column</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">original_y_column_list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">original_y_column</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_column</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">original_y_column</span> <span class="o">=</span> <span class="n">original_y_column_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">misclassified</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">y_test_df</span><span class="p">[</span><span class="o">~</span><span class="n">y_test_df</span><span class="p">[</span><span class="s1">&#39;check&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">original_y_column</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
+
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Misclassified analysis completed&#39;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">misclassified</span></div>
+
+
+<div class="viewcode-block" id="WineQualityClass.model_results">
+<a class="viewcode-back" href="../WineQuality.html#WineQuality.WineQualityClass.model_results">[docs]</a>
+    <span class="k">def</span> <span class="nf">model_results</span><span class="p">(</span><span class="bp">self</span>
+                      <span class="p">,</span> <span class="n">model</span>
+                      <span class="p">,</span> <span class="n">param_dist</span>
+                      <span class="p">,</span> <span class="n">cm_title</span>
+                      <span class="p">,</span> <span class="n">cm_file_name</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Provide a full picture of the model performance and accuracy</span>
+
+<span class="sd">        :param model: an initiated machine learning model</span>
+<span class="sd">        :type model: Any</span>
+<span class="sd">        :param param_dist: a dictionary with the parameters and their respective ranges for the tuning</span>
+<span class="sd">        :type param_dist: dict</span>
+<span class="sd">        :param cm_title: title for the confusion matrix plot</span>
+<span class="sd">        :type cm_title: str</span>
+<span class="sd">        :param cm_file_name: title for the confusion matrix plot</span>
+<span class="sd">        :type cm_file_name: str</span>
+<span class="sd">        :return: the best model with its accuracy metrics and misclassified analysis</span>
+<span class="sd">        :rtype: list</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Use random search to find the best hyperparameters</span>
+            <span class="n">rand_search</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">best_model</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">param_dist</span><span class="o">=</span><span class="n">param_dist</span><span class="p">)</span>
+
+            <span class="c1"># fit the best model</span>
+            <span class="n">rand_search</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X_train</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_train</span><span class="p">)</span>
+
+            <span class="c1"># generate predictions with the best model</span>
+            <span class="n">y_pred</span> <span class="o">=</span> <span class="n">rand_search</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X_test</span><span class="p">)</span>
+
+            <span class="c1"># calculate model accuracy</span>
+            <span class="n">acc</span><span class="p">,</span> <span class="n">precision</span><span class="p">,</span> <span class="n">recall</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">accuracy_metrics</span><span class="p">(</span><span class="n">y_pred</span><span class="o">=</span><span class="n">y_pred</span><span class="p">,</span>
+                                                           <span class="n">cm_title</span><span class="o">=</span><span class="n">cm_title</span><span class="p">,</span>
+                                                           <span class="n">cm_file_name</span><span class="o">=</span><span class="n">cm_file_name</span><span class="p">)</span>
+
+            <span class="c1"># check the misclassified datapoints</span>
+            <span class="n">misclassified</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">misclassified_analysis</span><span class="p">(</span><span class="n">y_pred</span><span class="o">=</span><span class="n">y_pred</span><span class="p">)</span>
+
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Model Results Calculated&#39;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">acc</span><span class="p">,</span> <span class="n">precision</span><span class="p">,</span> <span class="n">recall</span><span class="p">,</span> <span class="n">misclassified</span><span class="p">,</span> <span class="n">rand_search</span></div>
+
+
+<div class="viewcode-block" id="WineQualityClass.random_forest_results">
+<a class="viewcode-back" href="../WineQuality.html#WineQuality.WineQualityClass.random_forest_results">[docs]</a>
+    <span class="k">def</span> <span class="nf">random_forest_results</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Run Random Forest and conduct hyperparameter tuning, accuracy measurement and feature importance</span>
+
+<span class="sd">        :return: accuracy, precision, recall, confusion matrix plot file with the name &#39;rf_confusion_matrix.png&#39;, misclassified analysis, feature importance plot with the name &#39;rf_feature_importance.png&#39;</span>
+<span class="sd">        :rtype: list</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">param_dist</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;n_estimators&#39;</span><span class="p">:</span> <span class="n">randint</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="mi">500</span><span class="p">),</span> <span class="s1">&#39;max_depth&#39;</span><span class="p">:</span> <span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">20</span><span class="p">)}</span>
+            <span class="c1"># Create a random forest classifier</span>
+            <span class="n">rf</span> <span class="o">=</span> <span class="n">RandomForestClassifier</span><span class="p">()</span>
+
+            <span class="c1"># check the model results</span>
+            <span class="n">acc</span><span class="p">,</span> <span class="n">precision</span><span class="p">,</span> <span class="n">recall</span><span class="p">,</span> <span class="n">misclassified</span><span class="p">,</span> <span class="n">rand_search</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_results</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">rf</span><span class="p">,</span> <span class="n">param_dist</span><span class="o">=</span><span class="n">param_dist</span><span class="p">,</span>
+                                                                                    <span class="n">cm_title</span><span class="o">=</span><span class="s1">&#39;RF Confusion Matrix&#39;</span><span class="p">,</span>
+                                                                                    <span class="n">cm_file_name</span><span class="o">=</span><span class="s1">&#39;rf_confusion_matrix.png&#39;</span><span class="p">)</span>
+
+            <span class="c1"># # check the features importance</span>
+            <span class="n">best_model</span> <span class="o">=</span> <span class="n">rand_search</span><span class="o">.</span><span class="n">best_estimator_</span>
+            <span class="n">importances</span> <span class="o">=</span> <span class="n">best_model</span><span class="o">.</span><span class="n">feature_importances_</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">forest_importances</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">importances</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">X_train</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+
+            <span class="n">code_str</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot; </span>
+<span class="s2">            self.forest_importances.sort_values(ascending=False).plot(kind=&#39;barh&#39;)</span>
+<span class="s2">            plt.ylabel(&#39;Importance&#39;)</span>
+<span class="s2">            plt.xlabel(&#39;Features&#39;)</span>
+<span class="s2">                        &quot;&quot;&quot;</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">plot_figure</span><span class="p">(</span>
+                <span class="n">plot_title</span><span class="o">=</span><span class="s1">&#39;RF Feature Importance&#39;</span>
+                <span class="p">,</span> <span class="n">file_title</span><span class="o">=</span><span class="s1">&#39;rf_feature_importance.png&#39;</span>
+                <span class="p">,</span> <span class="n">plot_code</span><span class="o">=</span><span class="n">code_str</span>
+            <span class="p">)</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Random forest results calculated&#39;</span><span class="p">)</span>
+
+            <span class="c1"># create a plot for the misclassified</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">misclass_rf</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">misclassified</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">misclass_rf</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">misclass_rf</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">by</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">old_col_name</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="n">code_str</span> <span class="o">=</span> <span class="s2">&quot;sns.barplot(self.misclass_rf, x=self.old_col_name, y=&#39;count&#39;)&quot;</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">plot_figure</span><span class="p">(</span>
+                <span class="n">plot_title</span><span class="o">=</span><span class="s1">&#39;Random Forest Misclassified Distribution&#39;</span>
+                <span class="p">,</span> <span class="n">file_title</span><span class="o">=</span><span class="s1">&#39;misclassified_rf.png&#39;</span>
+                <span class="p">,</span> <span class="n">plot_code</span><span class="o">=</span><span class="n">code_str</span>
+            <span class="p">)</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Random Forest misclassified distribution plot created&quot;</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">acc</span><span class="p">,</span> <span class="n">precision</span><span class="p">,</span> <span class="n">recall</span><span class="p">,</span> <span class="n">misclassified</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="WineQualityClass.log_reg_results">
+<a class="viewcode-back" href="../WineQuality.html#WineQuality.WineQualityClass.log_reg_results">[docs]</a>
+    <span class="k">def</span> <span class="nf">log_reg_results</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Run Logistic Regression and conduct hyperparameter tuning, accuracy measurement and feature importance</span>
+
+<span class="sd">        :return: accuracy, precision, recall, confusion matrix plot file with the name &#39;rf_confusion_matrix.png&#39;, misclassified analysis, feature importance plot with the name &#39;lasso_confusion_matrix.png&#39;</span>
+<span class="sd">        :rtype: list</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">param_dist</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;C&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">)}</span>
+
+            <span class="c1"># create a logistic regression model</span>
+            <span class="n">log_reg</span> <span class="o">=</span> <span class="n">LogisticRegression</span><span class="p">(</span>
+                <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span>
+                <span class="n">penalty</span><span class="o">=</span><span class="s1">&#39;l1&#39;</span><span class="p">,</span>
+                <span class="n">solver</span><span class="o">=</span><span class="s1">&#39;liblinear&#39;</span>
+            <span class="p">)</span>
+
+            <span class="c1"># check the model results</span>
+            <span class="n">acc</span><span class="p">,</span> <span class="n">precision</span><span class="p">,</span> <span class="n">recall</span><span class="p">,</span> <span class="n">misclassified</span><span class="p">,</span> <span class="n">rand_search</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_results</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">log_reg</span>
+                                                                                    <span class="p">,</span> <span class="n">param_dist</span><span class="o">=</span><span class="n">param_dist</span>
+                                                                                    <span class="p">,</span>
+                                                                                    <span class="n">cm_title</span><span class="o">=</span><span class="s1">&#39;Lasso Confusion Matrix&#39;</span><span class="p">,</span>
+                                                                                    <span class="n">cm_file_name</span><span class="o">=</span><span class="s1">&#39;lasso_confusion_matrix.png&#39;</span><span class="p">)</span>
+
+            <span class="c1"># check the features importance</span>
+            <span class="n">best_model</span> <span class="o">=</span> <span class="n">rand_search</span><span class="o">.</span><span class="n">best_estimator_</span>
+            <span class="n">log_reg_coef</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">best_model</span><span class="o">.</span><span class="n">coef_</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">X_train</span><span class="o">.</span><span class="n">columns</span><span class="p">))</span>
+            <span class="n">log_reg_coef_non_zero</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">log_reg_coef</span> <span class="k">if</span> <span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">]</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Logistic regression results calculated&#39;</span><span class="p">)</span>
+
+            <span class="c1"># create a plot for the misclassified</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">misclass_log</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">misclassified</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">misclass_log</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">misclass_log</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">by</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">old_col_name</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="n">code_str</span> <span class="o">=</span> <span class="s2">&quot;sns.barplot(self.misclass_log, x=self.old_col_name, y=&#39;count&#39;)&quot;</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">plot_figure</span><span class="p">(</span>
+                <span class="n">plot_title</span><span class="o">=</span><span class="s1">&#39;Lasso Misclassified Distribution&#39;</span>
+                <span class="p">,</span> <span class="n">file_title</span><span class="o">=</span><span class="s1">&#39;misclassified_log.png&#39;</span>
+                <span class="p">,</span> <span class="n">plot_code</span><span class="o">=</span><span class="n">code_str</span>
+            <span class="p">)</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Lasso misclassified distribution plot created&quot;</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">acc</span><span class="p">,</span> <span class="n">precision</span><span class="p">,</span> <span class="n">recall</span><span class="p">,</span> <span class="n">misclassified</span><span class="p">,</span> <span class="n">log_reg_coef_non_zero</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Denitsa.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
