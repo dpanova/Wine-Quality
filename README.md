@@ -27,6 +27,7 @@
 
 ## Resulting Files:
 1. wine_quality_report.pdf - is teh output from WineQualityReport.py 
+2. WineQUalityPresentation.pdf - presentation with the final results
 
 ## Analysis based on the wine_quality_report.pdf
 ### Dependant variable 
