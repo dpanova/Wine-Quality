@@ -11,9 +11,10 @@
 - data_types.csv - manually created csv file to ensure any upcoming new input data will have the same data types and columns 
 - wine+quality/winequality-red.csv - input data for the report (https://archive.ics.uci.edu/ml/datasets/wine+quality)
 - wine.log - log file for WineQuality.py
+- top_drivers_statistics.csv - statistical analysis after the WineQualityReport is conducted 
 
 # Python Files: 
-1. WineQuality.py - a python class is created to automate the analysis of the data 
+1. WineQuality.py - a python class is created to automate the analysis of the data. Documentation is available at https://dpanova.github.io/Wine-Quality/ 
 2. WineQualityReport.py - a python file which uses WineQuality.py to produce an automated pdf report. The report steps are as follows:
 - read the data from a csv
 - validate if the data is as expected 
@@ -87,4 +88,4 @@ According to the feature importance analysis, the top three variables are identi
 Examining the confusion matrix, it is evident that these variables do not exhibit a high level of correlation.
 
 ### Conclusion 
-Opting for the random forest model due to its higher accuracy, we decide to focus on the top 3 drivers identified by that model. As the next step, to examine the actual relationship with quality, as opposed to the quality bucket, we conduct separate regression analyses.
+Opting for the random forest model due to its higher accuracy, we decide to focus on the top 3 drivers identified by that model. As the next step, to examine the actual relationship with quality, as opposed to the quality bucket, we conduct statistical analyses together with domain knowledge expertise from the following article https://www.ncbi.nlm.nih.gov/books/NBK531662/.
