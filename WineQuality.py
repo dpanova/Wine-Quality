@@ -14,15 +14,15 @@ from sklearn.linear_model import LogisticRegression
 class WineQualityClass:
     """WineQuality class automates a report for wine quality.
 
-    :param csv_path: indicates path to the input data
+    :param csv_path: path to the input data
     :type csv_path: str
-    :param dtype_path: indicates path to the file which contains the necessary data types and columns in order for the analysis to be conducted
+    :param dtype_path: path to the file which contains the necessary data types and columns in order for the analysis to be conducted
     :type dtype_path: str
-    :param csv_separator: indicates the separator for the csv_path file. The default value is ';'
+    :param csv_separator: separator for the csv_path file
     :type csv_separator: str
-    :param dtype_separator: indicates the separator for the dtype_csv file. The default value is ';'
+    :param dtype_separator: separator for the dtype_csv file
     :type dtype_separator: str
-    :param logname: indicates path to the log file, The default value is 'wine.log'
+    :param logname: path to the log file
     :type logname: str
     :return: WineQualityClass object
     :rtype: WineQualityClass
@@ -43,20 +43,21 @@ class WineQualityClass:
                             , format='%(asctime)s %(levelname)s %(message)s'
                             , datefmt='%H:%M:%S'
                             , level=logging.DEBUG)
-        # TODO add as a return values the self objects
+
 
     def get_data_csv(self):
         """Goal: The function takes the csv_path location from the class and the corresponding csv_separator to the read the data
 
-        :return: pandas data frame with the results
+        :return : pandas data frame with the results
+        :rtype : pandas.DataFrame
         """
         self.data = pd.read_csv(self.csv_path, sep=self.csv_separator)
         logging.info("Data is read from a csv file successfully")
 
     def validate_data(self, col_name='column name'):
-        """
-        :param col_name: string of the column name which indicates where in the dtype_csv file the necessary column names are
-        :return: validation if the read csv is as expected so that the analysis can be conducted
+        """ Validates the input data
+        :param col_name: indicates where in the dtype_csv file the necessary column names are
+        :type col_name: str
         """
         # we can add th col_name in the class itself after that
         # check if all necessary columns are present
@@ -90,16 +91,23 @@ class WineQualityClass:
                                  , label2='low'
                                  , distribution_plot=True
                                  ):
-        """
-        Goal: This function can be used to create a new binary variable from an ordered categorical variable
-        :param old_col_name: string indicating the ordered categorical variable column name. The default value is 'quality'
-        :param new_col_name: string indicating the new categorical variable column name. The default value is 'quality bucket'
-        :param operator: string which indicated what the operator for the creation of the new variable should be. The options are between ('>','<','=='). The default is '>'
-        :param criteria: integer indicating the ordered categorical variable cut-off point for the creation of the new variable.The default is 5
-        :param label1: string indicating the one of the labels for the new variable.The default is 'high'
-        :param label2: string indicating the other label for the new variable. The default value is 'low'
-        :param distribution_plot: binary variable indicating if distribution graphs should be drawn and saved
-        :return: a new column in the dataframe and graphs of the dependant variables
+        """Creates a new binary variable from an ordered categorical variable
+        :param old_col_name : ordered categorical variable column name
+        :type old_col_name : str
+        :param new_col_name : new categorical variable column name
+        :param new_col_name : str
+        :param operator : operator for the creation of the new variable should be. The options are between ('>','<','==')
+        :type operator : str
+        :param criteria : ordered categorical variable cut-off point for the creation of the new variable
+        :param criteria : int
+        :param label1 : one of the labels for the new variable
+        :type label1 : str
+        :param label2 : the other label for the new variable
+        :type label2 : str
+        :param distribution_plot : if distribution graphs should be drawn and saved
+        :type distribution_plot : bool
+        :return : a new column in the dataframe and graphs of the dependant variables
+        :rtype : pandas.DataFrame
         """
         self.label1 = label1
         if operator == '>':
@@ -164,12 +172,16 @@ class WineQualityClass:
                    , stratify_column='quality'
                    , size=0.25
                    ):
-        """
+        """ Splitting the data into train and test
 
-        :param y_column: string indicating the column name of the dependant variable. The default value is 'quality bucket'.
-        :param stratify_column: sting indicating the column name of the variable to do a stratified sample on. The default value is 'quality'.
-        :param size: float indicating the test size
-        :return: X_train, y_train, X_test and y_test data frames as well as saving them as csv files with the same naming conventions
+        :param y_column : column name of the dependant variable
+        :type y_column : str
+        :param stratify_column : column name of the variable to do a stratified sample on
+        :type stratify_column : str
+        :param size : test size
+        :type size : float
+        :return : X_train, y_train, X_test and y_test data frames as well as saving them as csv files with the same naming conventions
+        :rtype : list of pandas.DataFrame
         """
         try:
             self.y_column = y_column
@@ -196,10 +208,14 @@ class WineQualityClass:
                     , plot_title
                     , file_title
                     , plot_code):
-        """
-        :param plot_title: string indicating the plot title
-        :param file_title: string indicating the title of the saved file
-        :param plot_code: string with the code to be executed for the plot to visualize
+        """ Plotting a figure based on dynamic code
+
+        :param plot_title : plot title
+        :type plot_title : str
+        :param file_title : title of the saved file
+        :type file_title : str
+        :param plot_code : code to be executed for the plot to visualize
+        :type plot_code : str
         :return: saved file with the requested plot
         """
         try:
@@ -212,9 +228,10 @@ class WineQualityClass:
             logging.error(error)
 
     def correlation_analysis(self):
-        """
-        The Goal of this analysis is to check if the dependent variables are correlated
-        :return: 'feature_correlation.png' - a plot with the correlation matrix
+        """Correlation analysis between dependant variables
+
+        :return : 'feature_correlation.png' - a plot with the correlation matrix
+        :rtype : png file
         """
         try:
             self.corr = self.X_train.corr()
@@ -228,10 +245,12 @@ class WineQualityClass:
             logging.error(error)
 
     def pca_analysis(self, n=2):
-        """
-        Goal: the higher the explained variance is, the higher the correlation is
-        :param n: number of components for the PCA
-        :return: a list with the explained variance from the PCA components
+        """ Principal components analysis
+
+        :param n : number of components for PCA
+        :type n : int
+        :return : a list with the explained variance from the PCA components
+        :rtype : list
         """
         try:
             pca = PCA(n_components=n)
@@ -242,9 +261,9 @@ class WineQualityClass:
         return pca.explained_variance_ratio_
 
     def independent_logistic_regression(self):
-        """
-        Goal: Run a logistic regression against each dependant variable separately to identify linear relationship
-        :return: 'logistic_regressions.png' - a plot with the logistic graphs.
+        """ Run a logistic regression against each dependant variable separately to identify linear relationship
+        :return : 'logistic_regressions.png' - a plot with the logistic graphs
+        :rtype : png file
         """
         try:
             train_df = pd.concat([self.X_train, self.y_train], axis=1)
@@ -262,11 +281,13 @@ class WineQualityClass:
             logging.error(error)
 
     def best_model(self, model, param_dist):
-        """
-        Goal: The goal of the function is to identify the best model after tuning the hyperparameters
-        :param model: an initiated machine learning model
-        :param param_dist: a dictionary with the parameters and their respective ranges for the tuning
-        :return: a RandomizedSearchCV object
+        """Identify the best model after tuning the hyperparameters
+        :param model : an initiated machine learning model
+        :type model : model
+        :param param_dist : a dictionary with the parameters and their respective ranges for the tuning
+        :type param_dist : dict
+        :return : RandomizedSearchCV object
+        :rtype : RandomizedSearchCV
         """
         try:
             best_model = RandomizedSearchCV(model,
@@ -279,12 +300,15 @@ class WineQualityClass:
         return best_model
 
     def accuracy_metrics(self, y_pred, cm_title, cm_file_name):
-        """
-        Goal: The goal of this function is to provide accuracy metrics to compare the different models
-        :param y_pred: list of predicted dependent values
-        :param cm_title: string identifying the title for the confusion matrix plot
-        :param cm_file_name: string identifying the file title for the confusion matrix plot
-        :return: accuracy, precision, recall and saved grpah for the confusion matrix
+        """ Provide accuracy metrics to compare the different models
+        :param y_pred : predicted dependent values
+        :type y_pred : list
+        :param cm_title : title for the confusion matrix plot
+        :type cm_title : str
+        :param cm_file_name : title for the confusion matrix plot
+        :type cm_file_name : str
+        :return : accuracy, precision, recall and saved graph for the confusion matrix
+        :rtype : list
         """
         try:
             # accuracy score
@@ -295,12 +319,6 @@ class WineQualityClass:
             # confusion matrix
 
             self.cm = confusion_matrix(self.y_test, y_pred)
-
-            # code_str = """
-            # sns.heatmap(self.cm, annot=True, fmt='.3f', linewidths=.5, square=True, cmap='Blues_r');
-            # plt.ylabel('Actual label');
-            # plt.xlabel('Predicted label');
-            #             """
 
             code_str = "sns.heatmap(self.cm, annot=True, fmt='.3f', linewidths=.5, square=True, cmap='Blues_r')"
 
@@ -316,10 +334,11 @@ class WineQualityClass:
         return acc, precision, recall
 
     def misclassified_analysis(self, y_pred):
-        """
-        Goal: the goal of this analysis is to understand where the model miscalculates and if any pattern can be found
-        :param y_pred: list of predicted dependent values
-        :return: list of the misclassified values
+        """ Misclassification analysis to understand where the model miscalculates and if any pattern can be found
+        :param y_pred : predicted dependent values
+        :type y_pred : list
+        :return : misclassified values
+        :rtype : list
         """
         try:
 
@@ -346,13 +365,17 @@ class WineQualityClass:
                       , param_dist
                       , cm_title
                       , cm_file_name):
-        """
-        Goal: This function is to provide a full picture of the model performance and accuracy
-        :param model: an initiated machine learning model
-        :param param_dist: a dictionary with the parameters and their respective ranges for the tuning
-        :param cm_title: string identifying the title for the confusion matrix plot
-        :param cm_file_name: string identifying the file title for the confusion matrix plot
-        :return: the best model with its accuracy metrics  and misclassified analysis
+        """Provide a full picture of the model performance and accuracy
+        :param model : an initiated machine learning model
+        :type model : model
+        :param param_dist : a dictionary with the parameters and their respective ranges for the tuning
+        :type param_dist : dict
+        :param cm_title : title for the confusion matrix plot
+        :type cm_title : str
+        :param cm_file_name : title for the confusion matrix plot
+        :type cm_file_name : str
+        :return: the best model with its accuracy metrics and misclassified analysis
+        :rtype : list
         """
         try:
             # Use random search to find the best hyperparameters
@@ -379,10 +402,10 @@ class WineQualityClass:
         return acc, precision, recall, misclassified, rand_search
 
     def random_forest_results(self):
-        """
-        Goal: Run Random Forest and conduct hyperparameter tuning, accuracy measurement and feature importance
-        :return: accuracy, precision, recall, confusion matrix plot file with the name 'rf_confusion_matrix.png',
+        """Run Random Forest and conduct hyperparameter tuning, accuracy measurement and feature importance
+        :return : accuracy, precision, recall, confusion matrix plot file with the name 'rf_confusion_matrix.png',
         misclassified analysis, feature importance plot with the name 'rf_feature_importance.png'
+        :rtype : list
         """
         try:
             param_dist = {'n_estimators': randint(50, 500), 'max_depth': randint(1, 20)}
@@ -431,10 +454,10 @@ class WineQualityClass:
             logging.error(error)
 
     def log_reg_results(self):
-        """
-        Goal: Run Logistic Regression and conduct hyperparameter tuning, accuracy measurement and feature importance
-        :return: accuracy, precision, recall, confusion matrix plot file with the name 'rf_confusion_matrix.png',
+        """Run Logistic Regression and conduct hyperparameter tuning, accuracy measurement and feature importance
+        :return : accuracy, precision, recall, confusion matrix plot file with the name 'rf_confusion_matrix.png',
         misclassified analysis, feature importance plot with the name 'lasso_confusion_matrix.png'
+        :rtype : list
         """
         try:
             param_dist = {'C': np.arange(0.01, 0.5, 0.01)}
