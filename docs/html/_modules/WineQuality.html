@@ -82,24 +82,26 @@
 <span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">accuracy_score</span><span class="p">,</span> <span class="n">confusion_matrix</span><span class="p">,</span> <span class="n">precision_score</span><span class="p">,</span> <span class="n">recall_score</span>
 <span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LogisticRegression</span>
 
+
 <div class="viewcode-block" id="WineQualityClass">
 <a class="viewcode-back" href="../WineQuality.html#WineQuality.WineQualityClass">[docs]</a>
 <span class="k">class</span> <span class="nc">WineQualityClass</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;WineQuality class automates a report for wine quality.</span>
 
-<span class="sd">    :param csv_path: indicates path to the input data</span>
+<span class="sd">    :param csv_path: path to the input data</span>
 <span class="sd">    :type csv_path: str</span>
-<span class="sd">    :param dtype_path: indicates path to the file which contains the necessary data types and columns in order for the analysis to be conducted</span>
+<span class="sd">    :param dtype_path: path to the file which contains the necessary data types and columns in order for the analysis to be conducted</span>
 <span class="sd">    :type dtype_path: str</span>
-<span class="sd">    :param csv_separator: indicates the separator for the csv_path file. The default value is &#39;;&#39;</span>
+<span class="sd">    :param csv_separator: separator for the csv_path file</span>
 <span class="sd">    :type csv_separator: str</span>
-<span class="sd">    :param dtype_separator: indicates the separator for the dtype_csv file. The default value is &#39;;&#39;</span>
+<span class="sd">    :param dtype_separator: separator for the dtype_csv file</span>
 <span class="sd">    :type dtype_separator: str</span>
-<span class="sd">    :param logname: indicates path to the log file, The default value is &#39;wine.log&#39;</span>
+<span class="sd">    :param logname: path to the log file</span>
 <span class="sd">    :type logname: str</span>
 <span class="sd">    :return: WineQualityClass object</span>
 <span class="sd">    :rtype: WineQualityClass</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span>
                  <span class="p">,</span> <span class="n">csv_path</span>
                  <span class="p">,</span> <span class="n">dtype_path</span>
@@ -116,14 +118,14 @@
                             <span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%(asctime)s</span><span class="s1"> </span><span class="si">%(levelname)s</span><span class="s1"> </span><span class="si">%(message)s</span><span class="s1">&#39;</span>
                             <span class="p">,</span> <span class="n">datefmt</span><span class="o">=</span><span class="s1">&#39;%H:%M:%S&#39;</span>
                             <span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
-        <span class="c1"># TODO add as a return values the self objects</span>
 
 <div class="viewcode-block" id="WineQualityClass.get_data_csv">
 <a class="viewcode-back" href="../WineQuality.html#WineQuality.WineQualityClass.get_data_csv">[docs]</a>
     <span class="k">def</span> <span class="nf">get_data_csv</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Goal: The function takes the csv_path location from the class and the corresponding csv_separator to the read the data</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the csv_path location from the class and the corresponding csv_separator to read the data</span>
 
 <span class="sd">        :return: pandas data frame with the results</span>
+<span class="sd">        :rtype: pandas.DataFrame</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">csv_path</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">csv_separator</span><span class="p">)</span>
         <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Data is read from a csv file successfully&quot;</span><span class="p">)</span></div>
@@ -132,9 +134,10 @@
 <div class="viewcode-block" id="WineQualityClass.validate_data">
 <a class="viewcode-back" href="../WineQuality.html#WineQuality.WineQualityClass.validate_data">[docs]</a>
     <span class="k">def</span> <span class="nf">validate_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">col_name</span><span class="o">=</span><span class="s1">&#39;column name&#39;</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        :param col_name: string of the column name which indicates where in the dtype_csv file the necessary column names are</span>
-<span class="sd">        :return: validation if the read csv is as expected so that the analysis can be conducted</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Validates the input data</span>
+
+<span class="sd">        :param col_name: indicates where in the dtype_csv file the necessary column names are</span>
+<span class="sd">        :type col_name: str</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># we can add th col_name in the class itself after that</span>
         <span class="c1"># check if all necessary columns are present</span>
@@ -171,16 +174,24 @@
                                  <span class="p">,</span> <span class="n">label2</span><span class="o">=</span><span class="s1">&#39;low&#39;</span>
                                  <span class="p">,</span> <span class="n">distribution_plot</span><span class="o">=</span><span class="kc">True</span>
                                  <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Goal: This function can be used to create a new binary variable from an ordered categorical variable</span>
-<span class="sd">        :param old_col_name: string indicating the ordered categorical variable column name. The default value is &#39;quality&#39;</span>
-<span class="sd">        :param new_col_name: string indicating the new categorical variable column name. The default value is &#39;quality bucket&#39;</span>
-<span class="sd">        :param operator: string which indicated what the operator for the creation of the new variable should be. The options are between (&#39;&gt;&#39;,&#39;&lt;&#39;,&#39;==&#39;). The default is &#39;&gt;&#39;</span>
-<span class="sd">        :param criteria: integer indicating the ordered categorical variable cut-off point for the creation of the new variable.The default is 5</span>
-<span class="sd">        :param label1: string indicating the one of the labels for the new variable.The default is &#39;high&#39;</span>
-<span class="sd">        :param label2: string indicating the other label for the new variable. The default value is &#39;low&#39;</span>
-<span class="sd">        :param distribution_plot: binary variable indicating if distribution graphs should be drawn and saved</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Creates a new binary variable from an ordered categorical variable</span>
+
+<span class="sd">        :param old_col_name: ordered categorical variable column name</span>
+<span class="sd">        :type old_col_name: str</span>
+<span class="sd">        :param new_col_name: new categorical variable column name</span>
+<span class="sd">        :param new_col_name: str</span>
+<span class="sd">        :param operator: operator for the creation of the new variable should be. The options are between (&#39;&gt;&#39;,&#39;&lt;&#39;,&#39;==&#39;)</span>
+<span class="sd">        :type operator: str</span>
+<span class="sd">        :param criteria: ordered categorical variable cut-off point for the creation of the new variable</span>
+<span class="sd">        :param criteria: int</span>
+<span class="sd">        :param label1: one of the labels for the new variable</span>
+<span class="sd">        :type label1: str</span>
+<span class="sd">        :param label2: the other label for the new variable</span>
+<span class="sd">        :type label2: str</span>
+<span class="sd">        :param distribution_plot: if distribution graphs should be drawn and saved</span>
+<span class="sd">        :type distribution_plot: bool</span>
 <span class="sd">        :return: a new column in the dataframe and graphs of the dependant variables</span>
+<span class="sd">        :rtype: pandas.DataFrame</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">label1</span> <span class="o">=</span> <span class="n">label1</span>
         <span class="k">if</span> <span class="n">operator</span> <span class="o">==</span> <span class="s1">&#39;&gt;&#39;</span><span class="p">:</span>
@@ -248,12 +259,16 @@
                    <span class="p">,</span> <span class="n">stratify_column</span><span class="o">=</span><span class="s1">&#39;quality&#39;</span>
                    <span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mf">0.25</span>
                    <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Splitting the data into train and test</span>
 
-<span class="sd">        :param y_column: string indicating the column name of the dependant variable. The default value is &#39;quality bucket&#39;.</span>
-<span class="sd">        :param stratify_column: sting indicating the column name of the variable to do a stratified sample on. The default value is &#39;quality&#39;.</span>
-<span class="sd">        :param size: float indicating the test size</span>
+<span class="sd">        :param y_column: column name of the dependant variable</span>
+<span class="sd">        :type y_column: str</span>
+<span class="sd">        :param stratify_column: column name of the variable to do a stratified sample on</span>
+<span class="sd">        :type stratify_column: str</span>
+<span class="sd">        :param size: test size</span>
+<span class="sd">        :type size: float</span>
 <span class="sd">        :return: X_train, y_train, X_test and y_test data frames as well as saving them as csv files with the same naming conventions</span>
+<span class="sd">        :rtype: list of pandas.DataFrame</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">y_column</span> <span class="o">=</span> <span class="n">y_column</span>
@@ -283,10 +298,14 @@
                     <span class="p">,</span> <span class="n">plot_title</span>
                     <span class="p">,</span> <span class="n">file_title</span>
                     <span class="p">,</span> <span class="n">plot_code</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        :param plot_title: string indicating the plot title</span>
-<span class="sd">        :param file_title: string indicating the title of the saved file</span>
-<span class="sd">        :param plot_code: string with the code to be executed for the plot to visualize</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Plotting a figure based on dynamic code</span>
+
+<span class="sd">        :param plot_title: plot title</span>
+<span class="sd">        :type plot_title: str</span>
+<span class="sd">        :param file_title: title of the saved file</span>
+<span class="sd">        :type file_title: str</span>
+<span class="sd">        :param plot_code: code to be executed for the plot to visualize</span>
+<span class="sd">        :type plot_code: str</span>
 <span class="sd">        :return: saved file with the requested plot</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
@@ -302,9 +321,10 @@
 <div class="viewcode-block" id="WineQualityClass.correlation_analysis">
 <a class="viewcode-back" href="../WineQuality.html#WineQuality.WineQualityClass.correlation_analysis">[docs]</a>
     <span class="k">def</span> <span class="nf">correlation_analysis</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        The Goal of this analysis is to check if the dependent variables are correlated</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Correlation analysis between dependant variables</span>
+
 <span class="sd">        :return: &#39;feature_correlation.png&#39; - a plot with the correlation matrix</span>
+<span class="sd">        :rtype: png file</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">corr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">X_train</span><span class="o">.</span><span class="n">corr</span><span class="p">()</span>
@@ -321,10 +341,12 @@
 <div class="viewcode-block" id="WineQualityClass.pca_analysis">
 <a class="viewcode-back" href="../WineQuality.html#WineQuality.WineQualityClass.pca_analysis">[docs]</a>
     <span class="k">def</span> <span class="nf">pca_analysis</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Goal: the higher the explained variance is, the higher the correlation is</span>
-<span class="sd">        :param n: number of components for the PCA</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Principal components analysis</span>
+
+<span class="sd">        :param n: number of components for PCA</span>
+<span class="sd">        :type n: int</span>
 <span class="sd">        :return: a list with the explained variance from the PCA components</span>
+<span class="sd">        :rtype: list</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">pca</span> <span class="o">=</span> <span class="n">PCA</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="n">n</span><span class="p">)</span>
@@ -338,9 +360,10 @@
 <div class="viewcode-block" id="WineQualityClass.independent_logistic_regression">
 <a class="viewcode-back" href="../WineQuality.html#WineQuality.WineQualityClass.independent_logistic_regression">[docs]</a>
     <span class="k">def</span> <span class="nf">independent_logistic_regression</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Goal: Run a logistic regression against each dependant variable separately to identify linear relationship</span>
-<span class="sd">        :return: &#39;logistic_regressions.png&#39; - a plot with the logistic graphs.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Run a logistic regression against each dependant variable separately to identify linear relationship</span>
+
+<span class="sd">        :return: &#39;logistic_regressions.png&#39; - a plot with the logistic graphs</span>
+<span class="sd">        :rtype: png file</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">train_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">X_train</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_train</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
@@ -361,11 +384,14 @@
 <div class="viewcode-block" id="WineQualityClass.best_model">
 <a class="viewcode-back" href="../WineQuality.html#WineQuality.WineQualityClass.best_model">[docs]</a>
     <span class="k">def</span> <span class="nf">best_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">param_dist</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Goal: The goal of the function is to identify the best model after tuning the hyperparameters</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Identify the best model after tuning the hyperparameters</span>
+
 <span class="sd">        :param model: an initiated machine learning model</span>
+<span class="sd">        :type model: Any</span>
 <span class="sd">        :param param_dist: a dictionary with the parameters and their respective ranges for the tuning</span>
-<span class="sd">        :return: a RandomizedSearchCV object</span>
+<span class="sd">        :type param_dist: dict</span>
+<span class="sd">        :return: RandomizedSearchCV object</span>
+<span class="sd">        :rtype: RandomizedSearchCV</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">best_model</span> <span class="o">=</span> <span class="n">RandomizedSearchCV</span><span class="p">(</span><span class="n">model</span><span class="p">,</span>
@@ -381,12 +407,16 @@
 <div class="viewcode-block" id="WineQualityClass.accuracy_metrics">
 <a class="viewcode-back" href="../WineQuality.html#WineQuality.WineQualityClass.accuracy_metrics">[docs]</a>
     <span class="k">def</span> <span class="nf">accuracy_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">cm_title</span><span class="p">,</span> <span class="n">cm_file_name</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Goal: The goal of this function is to provide accuracy metrics to compare the different models</span>
-<span class="sd">        :param y_pred: list of predicted dependent values</span>
-<span class="sd">        :param cm_title: string identifying the title for the confusion matrix plot</span>
-<span class="sd">        :param cm_file_name: string identifying the file title for the confusion matrix plot</span>
-<span class="sd">        :return: accuracy, precision, recall and saved grpah for the confusion matrix</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Provide accuracy metrics to compare the different models</span>
+
+<span class="sd">        :param y_pred: predicted dependent values</span>
+<span class="sd">        :type y_pred: list</span>
+<span class="sd">        :param cm_title: title for the confusion matrix plot</span>
+<span class="sd">        :type cm_title: str</span>
+<span class="sd">        :param cm_file_name: title for the confusion matrix plot</span>
+<span class="sd">        :type cm_file_name: str</span>
+<span class="sd">        :return: accuracy, precision, recall and saved graph for the confusion matrix</span>
+<span class="sd">        :rtype: list</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="c1"># accuracy score</span>
@@ -397,12 +427,6 @@
             <span class="c1"># confusion matrix</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">cm</span> <span class="o">=</span> <span class="n">confusion_matrix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span>
-
-            <span class="c1"># code_str = &quot;&quot;&quot;</span>
-            <span class="c1"># sns.heatmap(self.cm, annot=True, fmt=&#39;.3f&#39;, linewidths=.5, square=True, cmap=&#39;Blues_r&#39;);</span>
-            <span class="c1"># plt.ylabel(&#39;Actual label&#39;);</span>
-            <span class="c1"># plt.xlabel(&#39;Predicted label&#39;);</span>
-            <span class="c1">#             &quot;&quot;&quot;</span>
 
             <span class="n">code_str</span> <span class="o">=</span> <span class="s2">&quot;sns.heatmap(self.cm, annot=True, fmt=&#39;.3f&#39;, linewidths=.5, square=True, cmap=&#39;Blues_r&#39;)&quot;</span>
 
@@ -421,10 +445,12 @@
 <div class="viewcode-block" id="WineQualityClass.misclassified_analysis">
 <a class="viewcode-back" href="../WineQuality.html#WineQuality.WineQualityClass.misclassified_analysis">[docs]</a>
     <span class="k">def</span> <span class="nf">misclassified_analysis</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Goal: the goal of this analysis is to understand where the model miscalculates and if any pattern can be found</span>
-<span class="sd">        :param y_pred: list of predicted dependent values</span>
-<span class="sd">        :return: list of the misclassified values</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Misclassification analysis to understand where the model miscalculates and if any pattern can be found</span>
+
+<span class="sd">        :param y_pred: predicted dependent values</span>
+<span class="sd">        :type y_pred: list</span>
+<span class="sd">        :return: misclassified values</span>
+<span class="sd">        :rtype: list</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
 
@@ -454,13 +480,18 @@
                       <span class="p">,</span> <span class="n">param_dist</span>
                       <span class="p">,</span> <span class="n">cm_title</span>
                       <span class="p">,</span> <span class="n">cm_file_name</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Goal: This function is to provide a full picture of the model performance and accuracy</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Provide a full picture of the model performance and accuracy</span>
+
 <span class="sd">        :param model: an initiated machine learning model</span>
+<span class="sd">        :type model: Any</span>
 <span class="sd">        :param param_dist: a dictionary with the parameters and their respective ranges for the tuning</span>
-<span class="sd">        :param cm_title: string identifying the title for the confusion matrix plot</span>
-<span class="sd">        :param cm_file_name: string identifying the file title for the confusion matrix plot</span>
-<span class="sd">        :return: the best model with its accuracy metrics  and misclassified analysis</span>
+<span class="sd">        :type param_dist: dict</span>
+<span class="sd">        :param cm_title: title for the confusion matrix plot</span>
+<span class="sd">        :type cm_title: str</span>
+<span class="sd">        :param cm_file_name: title for the confusion matrix plot</span>
+<span class="sd">        :type cm_file_name: str</span>
+<span class="sd">        :return: the best model with its accuracy metrics and misclassified analysis</span>
+<span class="sd">        :rtype: list</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="c1"># Use random search to find the best hyperparameters</span>
@@ -490,10 +521,10 @@
 <div class="viewcode-block" id="WineQualityClass.random_forest_results">
 <a class="viewcode-back" href="../WineQuality.html#WineQuality.WineQualityClass.random_forest_results">[docs]</a>
     <span class="k">def</span> <span class="nf">random_forest_results</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Goal: Run Random Forest and conduct hyperparameter tuning, accuracy measurement and feature importance</span>
-<span class="sd">        :return: accuracy, precision, recall, confusion matrix plot file with the name &#39;rf_confusion_matrix.png&#39;,</span>
-<span class="sd">        misclassified analysis, feature importance plot with the name &#39;rf_feature_importance.png&#39;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Run Random Forest and conduct hyperparameter tuning, accuracy measurement and feature importance</span>
+
+<span class="sd">        :return: accuracy, precision, recall, confusion matrix plot file with the name &#39;rf_confusion_matrix.png&#39;, misclassified analysis, feature importance plot with the name &#39;rf_feature_importance.png&#39;</span>
+<span class="sd">        :rtype: list</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">param_dist</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;n_estimators&#39;</span><span class="p">:</span> <span class="n">randint</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="mi">500</span><span class="p">),</span> <span class="s1">&#39;max_depth&#39;</span><span class="p">:</span> <span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">20</span><span class="p">)}</span>
@@ -545,10 +576,10 @@
 <div class="viewcode-block" id="WineQualityClass.log_reg_results">
 <a class="viewcode-back" href="../WineQuality.html#WineQuality.WineQualityClass.log_reg_results">[docs]</a>
     <span class="k">def</span> <span class="nf">log_reg_results</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Goal: Run Logistic Regression and conduct hyperparameter tuning, accuracy measurement and feature importance</span>
-<span class="sd">        :return: accuracy, precision, recall, confusion matrix plot file with the name &#39;rf_confusion_matrix.png&#39;,</span>
-<span class="sd">        misclassified analysis, feature importance plot with the name &#39;lasso_confusion_matrix.png&#39;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Run Logistic Regression and conduct hyperparameter tuning, accuracy measurement and feature importance</span>
+
+<span class="sd">        :return: accuracy, precision, recall, confusion matrix plot file with the name &#39;rf_confusion_matrix.png&#39;, misclassified analysis, feature importance plot with the name &#39;lasso_confusion_matrix.png&#39;</span>
+<span class="sd">        :rtype: list</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">param_dist</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;C&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">)}</span>

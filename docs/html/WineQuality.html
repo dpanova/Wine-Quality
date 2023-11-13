@@ -99,11 +99,11 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>csv_path</strong> (<em>str</em>) – indicates path to the input data</p></li>
-<li><p><strong>dtype_path</strong> (<em>str</em>) – indicates path to the file which contains the necessary data types and columns in order for the analysis to be conducted</p></li>
-<li><p><strong>csv_separator</strong> (<em>str</em>) – indicates the separator for the csv_path file. The default value is ‘;’</p></li>
-<li><p><strong>dtype_separator</strong> (<em>str</em>) – indicates the separator for the dtype_csv file. The default value is ‘;’</p></li>
-<li><p><strong>logname</strong> (<em>str</em>) – indicates path to the log file, The default value is ‘wine.log’</p></li>
+<li><p><strong>csv_path</strong> (<em>str</em>) – path to the input data</p></li>
+<li><p><strong>dtype_path</strong> (<em>str</em>) – path to the file which contains the necessary data types and columns in order for the analysis to be conducted</p></li>
+<li><p><strong>csv_separator</strong> (<em>str</em>) – separator for the csv_path file</p></li>
+<li><p><strong>dtype_separator</strong> (<em>str</em>) – separator for the dtype_csv file</p></li>
+<li><p><strong>logname</strong> (<em>str</em>) – path to the log file</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -116,56 +116,102 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="WineQuality.WineQualityClass.accuracy_metrics">
 <span class="sig-name descname"><span class="pre">accuracy_metrics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y_pred</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cm_title</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cm_file_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/WineQuality.html#WineQualityClass.accuracy_metrics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#WineQuality.WineQualityClass.accuracy_metrics" title="Link to this definition"></a></dt>
-<dd><p>Goal: The goal of this function is to provide accuracy metrics to compare the different models
-:param y_pred: list of predicted dependent values
-:param cm_title: string identifying the title for the confusion matrix plot
-:param cm_file_name: string identifying the file title for the confusion matrix plot
-:return: accuracy, precision, recall and saved grpah for the confusion matrix</p>
+<dd><p>Provide accuracy metrics to compare the different models</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>y_pred</strong> (<em>list</em>) – predicted dependent values</p></li>
+<li><p><strong>cm_title</strong> (<em>str</em>) – title for the confusion matrix plot</p></li>
+<li><p><strong>cm_file_name</strong> (<em>str</em>) – title for the confusion matrix plot</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>accuracy, precision, recall and saved graph for the confusion matrix</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="WineQuality.WineQualityClass.best_model">
 <span class="sig-name descname"><span class="pre">best_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_dist</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/WineQuality.html#WineQualityClass.best_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#WineQuality.WineQualityClass.best_model" title="Link to this definition"></a></dt>
-<dd><p>Goal: The goal of the function is to identify the best model after tuning the hyperparameters
-:param model: an initiated machine learning model
-:param param_dist: a dictionary with the parameters and their respective ranges for the tuning
-:return: a RandomizedSearchCV object</p>
+<dd><p>Identify the best model after tuning the hyperparameters</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>Any</em>) – an initiated machine learning model</p></li>
+<li><p><strong>param_dist</strong> (<em>dict</em>) – a dictionary with the parameters and their respective ranges for the tuning</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>RandomizedSearchCV object</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>RandomizedSearchCV</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="WineQuality.WineQualityClass.binary_variable_creation">
 <span class="sig-name descname"><span class="pre">binary_variable_creation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">old_col_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'quality'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_col_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'quality</span> <span class="pre">bucket'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">operator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'&gt;'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">criteria</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'high'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'low'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distribution_plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/WineQuality.html#WineQualityClass.binary_variable_creation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#WineQuality.WineQualityClass.binary_variable_creation" title="Link to this definition"></a></dt>
-<dd><p>Goal: This function can be used to create a new binary variable from an ordered categorical variable
-:param old_col_name: string indicating the ordered categorical variable column name. The default value is ‘quality’
-:param new_col_name: string indicating the new categorical variable column name. The default value is ‘quality bucket’
-:param operator: string which indicated what the operator for the creation of the new variable should be. The options are between (‘&gt;’,’&lt;’,’==’). The default is ‘&gt;’
-:param criteria: integer indicating the ordered categorical variable cut-off point for the creation of the new variable.The default is 5
-:param label1: string indicating the one of the labels for the new variable.The default is ‘high’
-:param label2: string indicating the other label for the new variable. The default value is ‘low’
-:param distribution_plot: binary variable indicating if distribution graphs should be drawn and saved
-:return: a new column in the dataframe and graphs of the dependant variables</p>
+<dd><p>Creates a new binary variable from an ordered categorical variable</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>old_col_name</strong> (<em>str</em>) – ordered categorical variable column name</p></li>
+<li><p><strong>new_col_name</strong> – new categorical variable column name</p></li>
+<li><p><strong>new_col_name</strong> – str</p></li>
+<li><p><strong>operator</strong> (<em>str</em>) – operator for the creation of the new variable should be. The options are between (‘&gt;’,’&lt;’,’==’)</p></li>
+<li><p><strong>criteria</strong> – ordered categorical variable cut-off point for the creation of the new variable</p></li>
+<li><p><strong>criteria</strong> – int</p></li>
+<li><p><strong>label1</strong> (<em>str</em>) – one of the labels for the new variable</p></li>
+<li><p><strong>label2</strong> (<em>str</em>) – the other label for the new variable</p></li>
+<li><p><strong>distribution_plot</strong> (<em>bool</em>) – if distribution graphs should be drawn and saved</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a new column in the dataframe and graphs of the dependant variables</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="WineQuality.WineQualityClass.correlation_analysis">
 <span class="sig-name descname"><span class="pre">correlation_analysis</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/WineQuality.html#WineQualityClass.correlation_analysis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#WineQuality.WineQualityClass.correlation_analysis" title="Link to this definition"></a></dt>
-<dd><p>The Goal of this analysis is to check if the dependent variables are correlated
-:return: ‘feature_correlation.png’ - a plot with the correlation matrix</p>
+<dd><p>Correlation analysis between dependant variables</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>‘feature_correlation.png’ - a plot with the correlation matrix</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>png file</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="WineQuality.WineQualityClass.data_split">
 <span class="sig-name descname"><span class="pre">data_split</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y_column</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'quality</span> <span class="pre">bucket'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stratify_column</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'quality'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.25</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/WineQuality.html#WineQualityClass.data_split"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#WineQuality.WineQualityClass.data_split" title="Link to this definition"></a></dt>
-<dd><dl class="field-list simple">
+<dd><p>Splitting the data into train and test</p>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>y_column</strong> – string indicating the column name of the dependant variable. The default value is ‘quality bucket’.</p></li>
-<li><p><strong>stratify_column</strong> – sting indicating the column name of the variable to do a stratified sample on. The default value is ‘quality’.</p></li>
-<li><p><strong>size</strong> – float indicating the test size</p></li>
+<li><p><strong>y_column</strong> (<em>str</em>) – column name of the dependant variable</p></li>
+<li><p><strong>stratify_column</strong> (<em>str</em>) – column name of the variable to do a stratified sample on</p></li>
+<li><p><strong>size</strong> (<em>float</em>) – test size</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>X_train, y_train, X_test and y_test data frames as well as saving them as csv files with the same naming conventions</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list of pandas.DataFrame</p>
 </dd>
 </dl>
 </dd></dl>
@@ -173,10 +219,13 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="WineQuality.WineQualityClass.get_data_csv">
 <span class="sig-name descname"><span class="pre">get_data_csv</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/WineQuality.html#WineQualityClass.get_data_csv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#WineQuality.WineQualityClass.get_data_csv" title="Link to this definition"></a></dt>
-<dd><p>Goal: The function takes the csv_path location from the class and the corresponding csv_separator to the read the data</p>
+<dd><p>Return the csv_path location from the class and the corresponding csv_separator to read the data</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>pandas data frame with the results</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>pandas.DataFrame</p>
 </dd>
 </dl>
 </dd></dl>
@@ -184,54 +233,97 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="WineQuality.WineQualityClass.independent_logistic_regression">
 <span class="sig-name descname"><span class="pre">independent_logistic_regression</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/WineQuality.html#WineQualityClass.independent_logistic_regression"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#WineQuality.WineQualityClass.independent_logistic_regression" title="Link to this definition"></a></dt>
-<dd><p>Goal: Run a logistic regression against each dependant variable separately to identify linear relationship
-:return: ‘logistic_regressions.png’ - a plot with the logistic graphs.</p>
+<dd><p>Run a logistic regression against each dependant variable separately to identify linear relationship</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>‘logistic_regressions.png’ - a plot with the logistic graphs</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>png file</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="WineQuality.WineQualityClass.log_reg_results">
 <span class="sig-name descname"><span class="pre">log_reg_results</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/WineQuality.html#WineQualityClass.log_reg_results"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#WineQuality.WineQualityClass.log_reg_results" title="Link to this definition"></a></dt>
-<dd><p>Goal: Run Logistic Regression and conduct hyperparameter tuning, accuracy measurement and feature importance
-:return: accuracy, precision, recall, confusion matrix plot file with the name ‘rf_confusion_matrix.png’,
-misclassified analysis, feature importance plot with the name ‘lasso_confusion_matrix.png’</p>
+<dd><p>Run Logistic Regression and conduct hyperparameter tuning, accuracy measurement and feature importance</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>accuracy, precision, recall, confusion matrix plot file with the name ‘rf_confusion_matrix.png’, misclassified analysis, feature importance plot with the name ‘lasso_confusion_matrix.png’</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="WineQuality.WineQualityClass.misclassified_analysis">
 <span class="sig-name descname"><span class="pre">misclassified_analysis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y_pred</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/WineQuality.html#WineQualityClass.misclassified_analysis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#WineQuality.WineQualityClass.misclassified_analysis" title="Link to this definition"></a></dt>
-<dd><p>Goal: the goal of this analysis is to understand where the model miscalculates and if any pattern can be found
-:param y_pred: list of predicted dependent values
-:return: list of the misclassified values</p>
+<dd><p>Misclassification analysis to understand where the model miscalculates and if any pattern can be found</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>y_pred</strong> (<em>list</em>) – predicted dependent values</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>misclassified values</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="WineQuality.WineQualityClass.model_results">
 <span class="sig-name descname"><span class="pre">model_results</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_dist</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cm_title</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cm_file_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/WineQuality.html#WineQualityClass.model_results"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#WineQuality.WineQualityClass.model_results" title="Link to this definition"></a></dt>
-<dd><p>Goal: This function is to provide a full picture of the model performance and accuracy
-:param model: an initiated machine learning model
-:param param_dist: a dictionary with the parameters and their respective ranges for the tuning
-:param cm_title: string identifying the title for the confusion matrix plot
-:param cm_file_name: string identifying the file title for the confusion matrix plot
-:return: the best model with its accuracy metrics  and misclassified analysis</p>
+<dd><p>Provide a full picture of the model performance and accuracy</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>Any</em>) – an initiated machine learning model</p></li>
+<li><p><strong>param_dist</strong> (<em>dict</em>) – a dictionary with the parameters and their respective ranges for the tuning</p></li>
+<li><p><strong>cm_title</strong> (<em>str</em>) – title for the confusion matrix plot</p></li>
+<li><p><strong>cm_file_name</strong> (<em>str</em>) – title for the confusion matrix plot</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the best model with its accuracy metrics and misclassified analysis</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="WineQuality.WineQualityClass.pca_analysis">
 <span class="sig-name descname"><span class="pre">pca_analysis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/WineQuality.html#WineQualityClass.pca_analysis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#WineQuality.WineQualityClass.pca_analysis" title="Link to this definition"></a></dt>
-<dd><p>Goal: the higher the explained variance is, the higher the correlation is
-:param n: number of components for the PCA
-:return: a list with the explained variance from the PCA components</p>
+<dd><p>Principal components analysis</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>n</strong> (<em>int</em>) – number of components for PCA</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a list with the explained variance from the PCA components</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="WineQuality.WineQualityClass.plot_figure">
 <span class="sig-name descname"><span class="pre">plot_figure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plot_title</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_title</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_code</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/WineQuality.html#WineQualityClass.plot_figure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#WineQuality.WineQualityClass.plot_figure" title="Link to this definition"></a></dt>
-<dd><dl class="field-list simple">
+<dd><p>Plotting a figure based on dynamic code</p>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>plot_title</strong> – string indicating the plot title</p></li>
-<li><p><strong>file_title</strong> – string indicating the title of the saved file</p></li>
-<li><p><strong>plot_code</strong> – string with the code to be executed for the plot to visualize</p></li>
+<li><p><strong>plot_title</strong> (<em>str</em>) – plot title</p></li>
+<li><p><strong>file_title</strong> (<em>str</em>) – title of the saved file</p></li>
+<li><p><strong>plot_code</strong> (<em>str</em>) – code to be executed for the plot to visualize</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -243,20 +335,24 @@ misclassified analysis, feature importance plot with the name ‘lasso_confusion
 <dl class="py method">
 <dt class="sig sig-object py" id="WineQuality.WineQualityClass.random_forest_results">
 <span class="sig-name descname"><span class="pre">random_forest_results</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/WineQuality.html#WineQualityClass.random_forest_results"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#WineQuality.WineQualityClass.random_forest_results" title="Link to this definition"></a></dt>
-<dd><p>Goal: Run Random Forest and conduct hyperparameter tuning, accuracy measurement and feature importance
-:return: accuracy, precision, recall, confusion matrix plot file with the name ‘rf_confusion_matrix.png’,
-misclassified analysis, feature importance plot with the name ‘rf_feature_importance.png’</p>
+<dd><p>Run Random Forest and conduct hyperparameter tuning, accuracy measurement and feature importance</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>accuracy, precision, recall, confusion matrix plot file with the name ‘rf_confusion_matrix.png’, misclassified analysis, feature importance plot with the name ‘rf_feature_importance.png’</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="WineQuality.WineQualityClass.validate_data">
 <span class="sig-name descname"><span class="pre">validate_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">col_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'column</span> <span class="pre">name'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/WineQuality.html#WineQualityClass.validate_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#WineQuality.WineQualityClass.validate_data" title="Link to this definition"></a></dt>
-<dd><dl class="field-list simple">
+<dd><p>Validates the input data</p>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>col_name</strong> – string of the column name which indicates where in the dtype_csv file the necessary column names are</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>validation if the read csv is as expected so that the analysis can be conducted</p>
+<dd class="field-odd"><p><strong>col_name</strong> (<em>str</em>) – indicates where in the dtype_csv file the necessary column names are</p>
 </dd>
 </dl>
 </dd></dl>
